@@ -1,0 +1,143 @@
+body, p, span, th, td, div, li {
+    font-size: small;
+}
+
+.center {
+    text-align: center;
+}
+.center table {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+div.warning {
+    color: red;
+    border: solid 1px red;
+    padding: 1em;
+}
+p.warning {
+    color: red;
+    margin: 0.5em 0;
+}
+
+table.box,
+table.box th,
+table.box td
+{
+    border : solid 1px gainsboro;
+    text-align: left;
+}
+
+table {
+    border-collapse: collapse;
+    margin: 0 0 10px 0;
+}
+
+th, td {
+    padding: 10px;
+}
+
+div, p {
+  margin: 0 0 15px 0;
+}
+
+ul.sns {
+  margin: 15px 0;
+  padding: 0;
+}
+ul.sns li {
+  display: inline;
+  margin: 0 1em 0 0;
+}
+
+ul.menu {
+    margin: 15px 0;
+    padding: 0;
+}
+ul.menu li {
+    display: inline;
+    margin: 0 1em 0 0;
+}
+
+ul.unit, ul.idol {
+    padding: 0;
+}
+ul.unit li, ul.idol li {
+    display: inline;
+    margin: 0 1em 0 0;
+    line-height: 2em;
+}
+
+ul li {
+    line-height: 1.5em;
+}
+
+form {
+    margin: 1em 0;
+}
+
+div.content {
+}
+
+div.box {
+    border: solid 1px gainsboro;
+}
+
+body.section div.page {
+    border: solid 1px gainsboro;
+    padding: 0.5em;
+    margin: 0.5em 0;
+}
+
+img.comicImage {
+    max-width: 100%;
+    max-height: 100vh;
+    margin: 1em auto;
+}
+
+
+.footer-links {
+    text-align: center;
+    background-color: gainsboro;
+    padding: 1em;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+div.content {
+    max-width: 1000px;
+    margin: 1em auto;
+}
+body.edit div.content {
+}
+
+div.comment-form {
+    border: solid 1px gainsboro;
+    padding: 1em;
+}
+div.comment-form form textarea {
+    width: 80%;
+    height: 4em;
+}
+
+img.comicImage {
+    filter: drop-shadow(0 0 5px gray);
+}
+
+.order_id {
+    float: right;
+}
+
+div.nowloading {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: white;
+    opacity: 0.5;
+    width: 100%;
+    text-align: center;
+    padding: 50vh 0 0 0;
+}
+

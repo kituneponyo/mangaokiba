@@ -1,0 +1,181 @@
+{% extends "template.twig" %}
+
+{% block head %}
+    {% if comic.neetsha_id %}
+        <script type="text/javascript" charset="utf-8" src="https://neetsha.jp/addon/add_menu.js"></script>
+    {% endif %}
+    <style>
+        .blogparts {
+            width: 100%;
+            height: 5em;
+        }
+    </style>
+{% endblock %}
+
+{% block body_class %}edit{% endblock %}
+
+{% block content %}
+
+    <h2>作者情報管理</h2>
+
+<form action="/edit_author/editInfo" method="post">
+    <table class="box">
+        <tbody>
+        <tr>
+            <th>作者名(必須)</th>
+            <td><input type="text" name="name" value="{{ author.name }}" required></td>
+        </tr>
+        <tr>
+            <th>ホームページ</th>
+            <td><input type="text" name="url" value="{{ author.url }}"></td>
+        </tr>
+        <tr>
+            <th>twitter ID</th>
+            <td>
+                <input type="text" name="twitter" value="{{ author.twitter }}">
+                <p class="warning">
+                    ※IDのみ、＠不要
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <th>pixiv ID</th>
+            <td>
+                <input type="text" name="pixiv" value="{{ author.pixiv }}">
+                <p class="warning">
+                    ※IDのみ<br>
+                    ※数字のみなら https://www.pixiv.net/users/○○○○○に、<br>
+                    　アルファベットが含まれていれば https://pixiv.me/○○○○○に飛ばします
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <th>DLsiteアフィリエイト<br>アフィリエイトID</th>
+            <td>
+                <input type="text" name="dlsite_affiliate_id" value="{{ author.dlsite_affiliate_id }}">
+                <p class="warning">
+                    ※アフィリエイトIDを入れると、作品ページに自動的に広告が出ます<br>
+                    ※カスタム広告エリアを設定している場合、そちらが優先されます
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <th>カスタム広告エリア（右サイド）</th>
+            <td>
+                <textarea name="dlsite_side_parts" class="blogparts">{{ author.dlsite_side_parts }}</textarea>
+                <p class="warning">
+                    ※アフィリエイト用のブログパーツなど、埋め込みコードを自由に設定できます<br>
+                    ※画面幅が一定以上ある場合、作品ページの右サイドに表示されます<br>
+                    ※作品ごとのカスタム広告エリアが設定されている場合、そちらが優先されます<br>
+                    ※半角2048文字まで入ります
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <th>カスタム広告エリア（ページ下部）</th>
+            <td>
+                <textarea name="dlsite_wide_parts" class="blogparts">{{ author.dlsite_wide_parts }}</textarea>
+                <p class="warning">
+                    ※アフィリエイト用のブログパーツなど、埋め込みコードを自由に設定できます<br>
+                    ※作品ページの下部に表示されます<br>
+                    ※作品ごとのカスタム広告エリアが設定されている場合、そちらが優先されます<br>
+                    ※半角2048文字まで入ります
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <th>パスワード</th>
+            <td>
+                <table>
+                    <tbody>
+                    <tr>
+                        <th>現在のパスワード</th>
+                        <td><input type="password" name="current_password"></td>
+                    </tr>
+                    <tr>
+                        <th>新しいパスワード</th>
+                        <td><input type="text" name="new_password"></td>
+                    </tr>
+                    <tr>
+                        <th>新しいパスワード（確認）</th>
+                        <td><input type="text" name="new_password_confirm"></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <p class="warning">
+                    ※パスワードを変更する場合のみ入力ください。
+                </p>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <input type="hidden" name="id" value="{{ author.id }}">
+    <input type="submit" value="情報更新">
+</form>
+
+    <hr>
+    <h2>作品</h2>
+    {% if comics %}
+        <table class="box">
+            <tbody>
+            <tr>
+                <th>作品ID</th>
+                <th>作品名</th>
+                <th>〒</th>
+                <th>新都社ID</th>
+                <th></th>
+                <th></th>
+            </tr>
+        {% for comic in comics %}
+            <tr>
+                <td>{{ comic.id }}</td>
+                <td><a href="/comic/{{ comic.id }}">{{ comic.title }}</a></td>
+                <td>
+                    {% if comic.neetsha_id %}
+                        <a href="https://neetsha.jp/inside/comment.php?id={{ comic.neetsha_id }}">〒</a>
+                    {% else %}
+                        <a href="/comment/view/{{ comic.id }}">〒</a>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if comic.neetsha_id %}{{ comic.neetsha_id }}{% endif %}
+                </td>
+                <td>
+                    <a href="/edit_author/editComic/{{ comic.id }}">[編集]</a>
+                </td>
+                <td>
+                    <a href="/edit_author/deleteComic/{{ comic.id }}">[削除]</a>
+                </td>
+            </tr>
+        {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+    <form action="/edit_author/addComic" method="post">
+        <table class="box">
+            <tbody>
+            <tr>
+                <th>作品ID</th>
+                <td>
+                    <input type="text" name="comic_id">
+                    <p class="warning">※まんがおきばの作品IDを入れてください</p>
+                    <p class="warning">※新都社IDではありません</p>
+                </td>
+            </tr>
+            <tr>
+                <th>パスワード</th>
+                <td><input type="text" name="password"></td>
+            </tr>
+            </tbody>
+        </table>
+        <input type="submit" value="作品追加">
+    </form>
+
+    <hr>
+    <h2 style="text-align: right;">登録削除</h2>
+    <form action="/edit_author/deleteAuthor" method="post" style="text-align: right;">
+        <input type="hidden" name="id" value="{{ author.id }}">
+        <input type="submit" value="登録削除" onclick="return confirm('本当に削除しますか？');" style="color:red; background-color:pink;">
+    </form>
+
+{% endblock %}

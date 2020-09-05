@@ -1,0 +1,33 @@
+{% extends "template.twig" %}
+
+{% block body_class %}center{% endblock %}
+
+{% block content %}
+
+<h2>作品編集ログイン</h2>
+
+{% include "error.twig" %}
+
+    <p class="warning">※ログインがうまく行かない場合、再度試してみてください</p>
+
+<form action="/edit/doLogin" method="post">
+    <table class="box">
+        <tbody>
+        <tr>
+            <th>作品ID</th>
+            <td><input type="text" name="id" value="{{ input.id ? input.id : '' }}"></td>
+        </tr>
+        <tr>
+            <th>パスワード</th>
+            <td><input type="password" name="password"></td>
+        </tr>
+        </tbody>
+    </table>
+    <input type="submit" value="ログイン">
+</form>
+
+    <p>
+        <a href="/edit/create">新規登録</a>
+    </p>
+
+{% endblock %}

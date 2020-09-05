@@ -1,0 +1,56 @@
+{% extends "template.twig" %}
+
+{% block head %}
+    <style>
+      .res {
+        margin: 0 0 1em 1em;
+        padding: 1em;
+        background-color: whitesmoke;
+      }
+    </style>
+{% endblock %}
+
+{% block content %}
+
+    {% for message in messages if messages %}
+        <p class="warning">{{ message }}</p>
+    {% endfor %}
+
+
+  <h2><a href="/comic/{{ comic.id }}">{{ comic.title }}</a></h2>
+
+  <p>
+    作：{{ comic.author }}
+      {% if comic.url %}
+        <a href="{{ comic.url }}" target="_blank">[作者ホームページ]</a>
+      {% endif %}
+  </p>
+
+  <div class="comment">
+  {% if comments %}
+      {% for comment in comments %}
+          <p>
+            [{{ comment.id }}]
+            {{ comment.comment }}
+            <{{ comment.create_at }}>
+              {% if comment.is_admin %}
+                  <span style="color:red;">※運営コメント※</span>
+              {% endif %}
+          </p>
+          {% if comment.res %}
+          <p class="res">
+            {{ comment.res }}
+            <{{ comment.res_at }}>
+          </p>
+          {% endif %}
+      {% endfor %}
+  {% endif %}
+  </div>
+
+  {% include "comment/comment_form.twig" %}
+
+  <p class="footer-links">
+    <a href="/edit?id={{ comic.id }}">この作品を編集する</a>
+  </p>
+
+{% endblock %}

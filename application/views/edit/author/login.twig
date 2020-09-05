@@ -1,0 +1,33 @@
+{% extends "template.twig" %}
+
+{% block body_class %}center{% endblock %}
+
+{% block content %}
+
+<h2>作者ログイン</h2>
+
+{% include "error.twig" %}
+
+    <p class="warning">※ログインがうまく行かない場合、再度試してみてください</p>
+
+<form action="/edit_author/doLogin" method="post">
+    <table class="box">
+        <tbody>
+        <tr>
+            <th>メールアドレス</th>
+            <td><input type="text" name="email" value="{{ input.email }}"></td>
+        </tr>
+        <tr>
+            <th>パスワード</th>
+            <td><input type="password" name="password"></td>
+        </tr>
+        </tbody>
+    </table>
+    <input type="submit" value="ログイン">
+</form>
+
+    <p>
+        <a href="/edit_author/create">作者登録</a>
+    </p>
+
+{% endblock %}

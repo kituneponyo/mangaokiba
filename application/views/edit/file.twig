@@ -1,0 +1,381 @@
+{% extends "template.twig" %}
+
+{% block title %}{% endblock %}
+
+{% block head %}
+
+    <style>
+        div.chapter {
+            border: solid 1px gainsboro;
+            padding: 1em;
+        }
+        div.section {
+            border: solid 1px gainsboro;
+            padding: 1em;
+        }
+
+        div.page {
+            border: solid 1px gainsboro;
+            padding: 4px;
+            width: 100px;
+            float: left;
+            margin: 0 0.5em 0.5em 0;
+        }
+        img.thumb {
+            width: 100px;
+            height: 100px;
+            display: block;
+        }
+        img.img-preview {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            max-width: 50%;
+            max-height: 50%;
+        }
+
+        .up-type-bulk {
+            display: none;
+        }
+        .up-type-text {
+            display: none;
+        }
+
+    </style>
+
+    <script>
+
+        var imageDir = '{{ imageDir }}';
+
+        $(function(){
+            $('body').mousemove(function(e){
+                $('img.img-preview').css({
+                    'top': e.clientY + 5,
+                    'left': e.clientX + 5
+                })
+            });
+
+            $('div.page[preview]').mouseenter(function(e){
+                $('.img-preview').show();
+                showPreview($(e.target).attr('preview'));
+            });
+            $('div.page').mouseleave(function(e){
+                $('.img-preview').hide();
+            });
+        });
+
+        function showPreview (img) {
+            if (img) {
+                $('.img-preview').attr('src', imageDir + '/' + img);
+            }
+        }
+
+        function getSelectImageIds () {
+            var $pages = $('input[name=selectPage]:checked');
+            if ($pages.length == 0) {
+                return [];
+            }
+            var ids = [];
+            for (var i = 0; i < $pages.length; i++) {
+                ids.push($pages.eq(i).val());
+            }
+            return ids;
+        }
+
+        function bulkMovePage () {
+            if (!confirm('選択した画像を一括移動しますか？')) {
+                return false;
+            }
+
+            var ids = getSelectImageIds();
+
+            $.ajax('/edit/bulkMovePage', {
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    comic_id: {{ comic.id }},
+                    section_id: $('select[name=sectionIdToMove]').val(),
+                    ids: ids
+                }
+            }).done(function(data){
+                if (data.result == 1) {
+                    alert('移動しました');
+                    location.reload(true);
+                } else {
+                    alert('エラーです');
+                }
+            }).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+                alert('エラーです');
+            });
+        }
+
+        function bulkDeletePage () {
+            if (!confirm('選択した画像を削除しますか？')) {
+                return false;
+            }
+
+            var ids = getSelectImageIds();
+
+            $.ajax('/edit/bulkDeletePage', {
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    comic_id: {{ comic.id }},
+                    ids: ids
+                }
+            }).done(function(data){
+                if (data.result == 1) {
+                    alert('削除しました');
+                    location.reload(true);
+                } else {
+                    alert('エラーです');
+                }
+            }).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+                alert('エラーです');
+            });
+        }
+
+        function changeUpType (type) {
+            $('.up-type').hide();
+            $('.up-type-' + type).show();
+        }
+
+        function changeShowThumb () {
+            if ($('[name=showThumb]').prop('checked')) {
+                $('img.thumb').show();
+            } else {
+                $('img.thumb').hide();
+            }
+        }
+    </script>
+
+{% endblock %}
+
+{% block body_class %}edit{% endblock %}
+
+{% block content %}
+
+{% include "edit/edit_header.twig" with {'currentTab':'file'} %}
+
+    {#<div class="warning">#}
+        {#現在開発中につきファイル操作されないようお願いします。#}
+    {#</div>#}
+
+    <h2>トップ画像</h2>
+
+    {% if topImage %}
+        <p><a href="{{ imageDir }}/{{ topImage }}" target="_blank">トップ画像</a></p>
+        <form action="/edit/deleteTop" method="post">
+            <input type="submit" value="現在のトップ画像を削除する">
+        </form>
+    {% else %}
+        <form action="/edit/uploadTop" method="post" enctype="multipart/form-data" >
+            <p><input type="file" name="file"></p>
+            <input type="submit" value="アップロード">
+        </form>
+    {% endif %}
+
+    <hr>
+    <h2>章設定</h2>
+    <form action="/edit/addChapter" method="post">
+        <table class="box">
+            <tbody>
+            <tr>
+                <th>章タイトル</th>
+                <td><input type="text" name="title"></td>
+            </tr>
+            </tbody>
+        </table>
+        <input type="hidden" name="comic_id" value="{{ comic.id }}">
+        <input type="submit" value="章を追加">
+    </form>
+
+    <hr>
+
+    <h2>セパレート（話）設定</h2>
+    <form action="/edit/addSection" method="post">
+        <table class="box">
+            <tbody>
+            <tr>
+                <th>章</th>
+                <td>
+                    <select name="chapter_id">
+                        <option value="0">---</option>
+                        {% if chapters %}
+                            {% for chapter in chapters %}
+                                {% if chapter.id %}
+                                <option value="{{ chapter.id }}">{{ chapter.title }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th>話タイトル</th>
+                <td><input type="text" name="title"></td>
+            </tr>
+            </tbody>
+        </table>
+        <input type="hidden" name="comic_id" value="{{ comic.id }}">
+        <input type="submit" value="話を追加">
+    </form>
+
+<hr>
+
+<h2>本文アップロード</h2>
+
+<form action="/edit/upload" method="post" enctype="multipart/form-data" >
+
+    <p>
+        <label>
+            <input type="radio" name="upType" value="one" onclick="changeUpType('one');" checked="checked"
+            >画像１枚ずつ
+        </label>
+        <label>
+            <input type="radio" name="upType" value="bulk" onclick="changeUpType('bulk');"
+            >画像まとめて
+        </label>
+        <label>
+            <input type="radio" name="upType" value="text" onclick="changeUpType('text');"
+            >テキスト
+        </label>
+    </p>
+
+    <div class="up-type up-type-one">
+        <div style="float:left;">
+            {% for i in 1..5 %}
+            {{ i }}.<input type="file" name="file[]" accept="image/png, image/jpeg, image/gif"><br>
+            {% endfor %}
+        </div>
+        <div style="float:left;">
+            {% for i in 6..10 %}
+                {{ i }}.<input type="file" name="file[]" accept="image/png, image/jpeg, image/gif"><br>
+            {% endfor %}
+        </div>
+        <div style="clear:both;"></div>
+        <p class="warning">※対応ファイル形式：png、jpg、gif</p>
+        <p class="warning">※推奨ファイル形式：png、横幅800px、縦幅1000px程度</p>
+        <p class="warning">※元原稿がモノクロ二値の場合はカラーは4bit、グレースケールなら8biyが推奨</p>
+        <p class="warning">※サーバ負担というより、読者の利便性（表示速度、通信料軽減）のためです</p>
+        <p class="warning">※1ファイルあたりの最大サイズ：1MByte（今後改善予定）</p>
+        <p class="warning">※一度にアップロードできる合計最大サイズ：100MByte</p>
+    </div>
+    <div class="up-type up-type-bulk">
+        <input type="file" multiple name="file[]" accept="image/png, image/jpeg">
+        <p class="warning">※アップロードされるファイルの順番は利用環境・ファイル選択時の挙動により前後します</p>
+        <p class="warning">※対応ファイル形式：png, jpg</p>
+    </div>
+    <div class="up-type up-type-text">
+        <textarea name="text" style="width:100%; height: 10em;"
+                  placeholder="小説・文章の場合、ここにコピペしてください"></textarea>
+        <p class="warning">※URLは自動リンクされます。</p>
+        <p class="warning">※HTMLが使えます。</p>
+        <p class="warning">※neetsha.jp, manga.okiba.jp 以外のドメインに対するAタグは、target="_blank" を設定してください。</p>
+    </div>
+
+    <input type="hidden" name="id" value="{{ comic.id }}">
+
+    <select name="section_id">
+        <option value="0">---</option>
+        {% for chapter in chapters %}
+            {% for section in chapter.sections %}
+                {% if section.id %}
+                <option value="{{ section.id }}">{{ chapter.title }} {{ section.title }}</option>
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+    </select>
+
+    <input type="hidden" name="comic_id" value="{{ comic.id }}">
+    <input type="submit" value="アップロード" onclick="nowloading();">
+</form>
+
+    <hr>
+
+    <h2>ページ一覧</h2>
+
+    <div>
+        選択したページを：
+        &nbsp;
+        <input type="button" value="削除" onclick="bulkDeletePage();">
+        &nbsp;
+        <select name="sectionIdToMove">
+            <option value="0">（話設定なし）</option>
+            {% for chapter in chapters %}
+                {% for section in chapter.sections %}
+                    {% if section.id %}
+                        <option value="{{ section.id }}">{{ chapter.title }} {{ section.title }}</option>
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+        </select>
+        <input type="button" value="に移動" onclick="bulkMovePage();">
+    </div>
+
+    <p>
+        <label>
+            <input type="checkbox" name="showThumb" value="1" checked="checked" onclick="changeShowThumb();">サムネイル表示
+        </label>
+    </p>
+
+    {% for chapter in chapters %}
+
+    <div class="chapter">
+        <p>
+            {{ chapter.title|default('（章設定なし）') }}
+            <span class="order_id">
+                {% if chapter.id %}
+                {% if not chapter.sections %}
+                <a href="/edit/deleteChapter?comic_id={{ comic.id }}&chapter_id={{ chapter.id }}"
+                   onclick="return confirm('この章を削除しますか？')">×</a>
+                {% endif %}
+                {% endif %}
+            </span>
+        </p>
+        {% for section in chapter.sections %}
+        <div class="section">
+            <p>
+                {{ section.title|default('（話設定なし）') }}
+                <a href="/comic/{{ comic.id }}/{{ section.id|default('0') }}" target="_blank">[掲載ページ]</a>
+                {% if section.id %}
+                <a href="/edit/section/{{ comic.id }}/{{ section.id }}">[編集]</a>
+                {% endif %}
+                <span class="order_id">
+                    {% if section.id %}
+                        {% if not loop.first %}
+                            <a href="/edit/moveUpSection">▲</a>
+                        {% endif %}
+                        {% if not loop.last %}
+                            <a href="/edit/moveDownSection">▼</a>
+                        {% endif %}
+                    <a href="/edit/deleteSection?comic_id={{ comic.id }}&section_id={{ section.id }}" onclick="return confirm('この話を削除しますか？')">×</a>
+                    {% endif %}
+                </span>
+            </p>
+            {% for page in section.pages %}
+                <div class="page" preview="{{ page.filename }}">
+                    <label>
+                        {% if page.filename %}
+                            <img class="thumb" src="/comic/thumb?path={{ imageDir }}/{{ page.filename }}">
+                        {% elseif page.text %}
+                            <img class="thumb" src="/img/text.png">
+                        {% endif %}
+                        <input type="checkbox" name="selectPage" value="{{ page.id }}">
+                        ページ{{ loop.index }}
+                    </label>
+                </div>
+
+            {% endfor %}
+            <div style="clear:both;"></div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+
+    <hr>
+
+    <img class="img-preview">
+
+{% endblock %}

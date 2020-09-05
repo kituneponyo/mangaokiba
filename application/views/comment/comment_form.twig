@@ -1,0 +1,67 @@
+<style>
+    div.comment-form {
+        background-color: gainsboro;
+        padding: 1em;
+        -webkit-border-radius: 5px;
+        -moz-border-radius: 5px;
+        border-radius: 5px;
+        text-align: center;
+    }
+    div.comment-form textarea {
+        width: 100%;
+        height: 4em;
+    }
+    div.comment-form input[type=submit] {
+        padding: 0.5em;
+    }
+    div.comment-form div.latest_comments {
+        background-color: white;
+        padding: 1em;
+        text-align: left;
+        -webkit-border-radius: 5px;
+        -moz-border-radius: 5px;
+        border-radius: 5px;
+    }
+    div.comment-form div.latest_comments h3 {
+        margin: 0 0 1em 0;
+    }
+    .res {
+        margin: 0 0 1em 1em;
+        padding: 1em;
+        background-color: whitesmoke;
+    }
+</style>
+<div class="comment-form" style="border: solid 1px gainsboro; padding: 1em;">
+    {% if latest_comments %}
+        <div class="latest_comments">
+            <h3>最新コメント</h3>
+            {% for comment in latest_comments %}
+                <p>
+                    [{{ comment.id }}]
+                    {{ comment.comment }}
+                    <{{ comment.create_at }}>
+                    {% if comment.is_admin %}
+                        <span style="color:red;">※運営コメント※</span>
+                    {% endif %}
+                </p>
+                {% if comment.res %}
+                    <p class="res">
+                        {{ comment.res }}
+                        <{{ comment.res_at }}>
+                    </p>
+                {% endif %}
+            {% endfor %}
+            {% if comment_count %}
+                <p><a href="https://manga.okiba.jp/comment/view/{{ comic.id }}">すべてのコメント（{{ comment_count }}件）を見る &gt;&gt;</a></p>
+            {% endif %}
+        </div>
+    {% endif %}
+    <p>{{ comic.author }}先生に励ましのお便りを送ろう！</p>
+    <form action="https://manga.okiba.jp/comment/post" method="post">
+        <input type="hidden" name="comic_id" value="{{ comic.id }}">
+        <textarea name="comment" placeholder="ここにコメントをお書きください。" style="width:100%; height:4em;"></textarea>
+        <p><input type="submit" value="コメントを投稿する"></p>
+        <p><a href="https://manga.okiba.jp/comment/view/{{ comic.id }}">〒みんなのコメントを見る</a></p>
+        <p><a href="https://manga.okiba.jp/edit/comment/{{ comic.id }}">コメントに返信する（作者用）</a></p>
+    </form>
+</div>

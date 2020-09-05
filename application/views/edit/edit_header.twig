@@ -1,0 +1,46 @@
+<h2>
+    作品管理
+    {% if auth == 'author' %}(作者){% endif %}
+    {% if auth == 'share' %}(共有者){% endif %}
+    - <a href="/comic/{{ comic.id }}" target="_blank">{{ comic.title }}</a>
+</h2>
+
+{% include "error.twig" %}
+
+<p>
+    {% if author_id %}
+    <a href="/edit_author">作者情報</a>
+    &nbsp;
+    {% endif %}
+    {% if currentTab == 'index' %}
+    作品情報
+    {% else %}
+    <a href="/edit">作品情報</a>
+    {% endif %}
+    &nbsp;
+    {% if currentTab == 'file' %}
+    ファイル管理
+    {% else %}
+    <a href="/edit/file">ファイル管理</a>
+    {% endif %}
+    {% if currentTab == 'section' %}
+    &nbsp;
+    話管理
+    {% endif %}
+    {% if not comic.neetsha_id %}
+    &nbsp;
+    {% if currentTab == 'comment' %}
+        コメント
+    {% else %}
+        <a href="/edit/comment">コメント</a>
+    {% endif %}
+    {% endif %}
+    &nbsp;
+    {% if currentTab == 'pv' %}
+    アクセス解析
+    {% else %}
+    <a href="/edit/pv">アクセス解析</a>
+    {% endif %}
+    &nbsp;
+    <a href="/edit/logout">ログアウト</a>
+</p>

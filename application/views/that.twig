@@ -1,0 +1,85 @@
+{% extends "template_that.twig" %}
+
+{% block head %}
+
+    <style>
+        div.randomtop {
+            margin: 2em 0;
+        }
+        div.randomtop img {
+            max-width: 100%;
+            max-height: 50vh;
+        }
+        div.comic {
+            float: left;
+            width: 160px;
+            height:210px;
+            margin: 0 1em 1em 0;
+        }
+        div.comic div.thumb {
+            display: table-cell;
+            vertical-align: middle;
+            width: 160px;
+            height: 160px;
+        }
+        div.comic img {
+            max-width: 100%;
+            max-height: 100%;
+            text-align: center;
+            margin: 0 0 0.5em 0;
+        }
+    </style>
+
+{% endblock %}
+
+{% block body_class %}center{% endblock %}
+
+{% block content %}
+
+    <p>「雑都社」は、栄太な漫画投稿サイトです。</p>
+
+    <p>
+        <a href="/edit/create">作品登録</a>
+        &nbsp;
+        <a href="/comment/latest">最新コメント</a>
+        &nbsp;
+        <a href="/bbs/bbs/">掲示板</a>
+    </p>
+
+    <hr>
+
+    {% if randomTop and randomTopImage %}
+        <div class="randomtop">
+            <a href="/comic/{{ randomTop.id }}">
+                <img src="{{ randomTopImage }}">
+                <p>{{ randomTop.title }}</p>
+            </a>
+        </div>
+    {% endif %}
+
+    <p>作品一覧（最新更新順）</p>
+    {% if comics %}
+        {% for comic in comics -%}
+            <div class="comic">
+                <a href="/comic/{{ comic.id }}">
+                    <div class="thumb">
+                        {% if comic.top_image %}
+                            <img src="/comic/thumb?path={{ comic.imageDir }}/{{ comic.top_image }}&w=200&h=200">
+                        {% else %}
+                            <img src="/img/no_top_image_200_200.png">
+                        {% endif %}
+                    </div>
+                </a>
+                <p>
+                    <a href="/comic/{{ comic.id }}">{{ comic.title }}</a>
+                    {{ comic.author }}
+                    <a href="/comment/view/{{ comic.id }}">〒</a>
+                </p>
+            </div>
+        {%- endfor %}
+    {% endif %}
+
+    <div style="clear:both;"></div>
+
+{% endblock %}
+{# 子テンプレートでfooterについて記述しなければbase.htmlの記述が出力される #}

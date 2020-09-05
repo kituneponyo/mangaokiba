@@ -1,0 +1,116 @@
+{% extends "template.twig" %}
+
+{% block head %}
+
+    <style>
+        div.randomtop {
+            margin: 2em 0;
+            background-color: gainsboro;
+            padding: 1em;
+            -webkit-border-radius: 5px;
+            -moz-border-radius: 5px;
+            border-radius: 5px;
+        }
+        div.randomtop img {
+            max-width: 100%;
+            max-height: 50vh;
+        }
+        div.comic {
+            float: left;
+            width: 160px;
+            height:210px;
+            margin: 0 1em 1em 0;
+        }
+        div.comic div.thumb {
+            display: table-cell;
+            vertical-align: middle;
+            width: 160px;
+            height: 160px;
+        }
+        div.comic img {
+            max-width: 100%;
+            max-height: 100%;
+            text-align: center;
+            margin: 0 0 0.5em 0;
+        }
+    </style>
+
+{% endblock %}
+
+{% block body_class %}center{% endblock %}
+
+{% block content %}
+
+    <div>
+        <p style="font-size:x-large; font-weight:bold; margin-bottom:1em; line-height:1.3em;">
+            <a href="https://manga.okiba.jp/blog/2020/08/18/award/">
+                賞金総額2万円（しょぼい）<br>
+                「まんがおきば賞」開催のおしらせ<br>
+                <img src="/img/award_01.png">
+            </a>
+        </p>
+    </div>
+
+    <p>「まんがおきば」は、自由な漫画投稿サイトです。</p>
+
+    <p>
+        <a href="/about">ごあんない</a>
+        &nbsp;
+        <a href="/edit_author/create">作者登録</a>
+        &nbsp;
+        <a href="/edit/create">作品登録</a>
+        &nbsp;
+        <a href="/comment/latest">最新コメント</a>
+        {#&nbsp;#}
+        {#<a href="/bbs/bbs/">掲示板</a>#}
+        &nbsp;
+        <a href="/oekaki/bbs/">お絵かき掲示板</a>
+        &nbsp;
+        <a href="/blog">おしらせ</a>
+    </p>
+
+    {% if randomTop and randomTopImage %}
+        <div class="randomtop">
+            <a href="/comic/{{ randomTop.id }}">
+                <img src="{{ randomTopImage }}" style="max-width:90vw;">
+                <p>{{ randomTop.title }}</p>
+            </a>
+        </div>
+    {% endif %}
+
+    <p>作品一覧（最新更新順）</p>
+    {% if comics %}
+        {% for comic in comics -%}
+            <div class="comic">
+                <a href="/comic/{{ comic.id }}">
+                    <div class="thumb">
+                        {% if comic.top_image %}
+                            <img src="/comic/thumb?path={{ comic.imageDir }}/{{ comic.top_image }}&w=200&h=200">
+                        {% else %}
+                            <img src="/img/no_top_image_200_200.png">
+                        {% endif %}
+                    </div>
+                </a>
+                <p>
+                    <a href="/comic/{{ comic.id }}">{{ comic.title }}</a>
+                    {{ comic.author }}
+                    <a href="/comment/view/{{ comic.id }}">〒</a>
+                </p>
+            </div>
+        {%- endfor %}
+    {% endif %}
+
+    <div style="clear:both;"></div>
+
+    {% if showEro %}
+        <p><a href="/?hideEro=1">えっちなやつを隠す</a></p>
+    {% else %}
+        <p><a href="/?showEro=1">えっちなやつを見る</a></p>
+    {% endif %}
+
+    {#{% include('ad/dlsite/allage_long.twig') %}#}
+    {#<p class="warning" comic_id="{{ wide_parts.id }}">作家さんの登録している広告をランダムに表示しています</p>#}
+    {#{{ wide_parts.wide_parts|raw }}#}
+
+{% endblock %}
+{# 子テンプレートでfooterについて記述しなければbase.htmlの記述が出力される #}

@@ -1,0 +1,192 @@
+{% extends "template.twig" %}
+
+{% block head %}
+    {% if comic.neetsha_id %}
+        <script type="text/javascript" charset="utf-8" src="https://neetsha.jp/addon/add_menu.js"></script>
+    {% endif %}
+
+    <style>
+        .blogparts {
+            width: 100%;
+            height: 5em;
+        }
+    </style>
+{% endblock %}
+
+{% block body_class %}edit{% endblock %}
+
+{% block content %}
+
+{% include "edit/edit_header.twig" with {'currentTab':'index'} %}
+
+<form action="/edit/editInfo" method="post">
+    <table class="box">
+        <tbody>
+        <tr>
+            <th>作品名(必須)</th>
+            <td><input type="text" name="title" value="{{ comic.title }}" required></td>
+        </tr>
+        <tr>
+            <th>作者名(必須)</th>
+            <td><input type="text" name="author" value="{{ comic.author }}" required></td>
+        </tr>
+        <tr>
+            <th>作者ホームページ</th>
+            <td><input type="text" name="url" value="{{ comic.url }}"></td>
+        </tr>
+        <tr>
+            <th>新都社ID</th>
+            <td>
+                <input type="text" name="neetsha_id" value="{{ comic.neetsha_id ? comic.neetsha_id : '' }}">
+                <p class="warning">※新都社IDを入れた作品は、まんがおきばトップには掲載されません。</p>
+                <p class="warning">※新都社IDを削除すると、まんがおきばトップに掲載されます。</p>
+            </td>
+        </tr>
+        <tr>
+            <th>自サイトURL</th>
+            <td>
+                <input type="text" name="comic_url" value="{{ comic.comic_url }}">
+                <p class="warning">
+                    ※自サイト運用の場合に入力してください。
+                </p>
+                <p class="warning">
+                    ※アップロードの場合、新都社連携している場合には入力しないでください。
+                </p>
+                <p class="warning">
+                    ※自サイト運用の場合、自サイトには必ず本ページ下のコメントフォームと
+                    まんがおきばへのリンクを設置してください。
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <th>レーティング</th>
+            <td>
+                <label>
+                    <input type="radio" name="rating" value="0" {% if comic.rating == 0 %}checked="checked"{% endif %}>一般
+                </label>
+                <label>
+                    <input type="radio" name="rating" value="1" {% if comic.rating == 1 %}checked="checked"{% endif %}>R-15（お色気表現）
+                </label>
+                <label>
+                    <input type="radio" name="rating" value="2" {% if comic.rating == 2 %}checked="checked"{% endif %}>R-18（エロ）
+                </label>
+                <label>
+                    <input type="radio" name="rating" value="3" {% if comic.rating == 3 %}checked="checked"{% endif %}>R-18G（グロ）
+                </label>
+            </td>
+        </tr>
+        {#<tr>#}
+            {#<th>トップページのレイアウト</th>#}
+            {#<td>#}
+                {#<label>#}
+                    {#<input type="radio" name="top_layout" value="0"#}
+                           {#{% if comic.top_layout == 0 %}checked="checked"{% endif %}>テキスト#}
+                {#</label>#}
+                {#<label>#}
+                    {#<input type="radio" name="top_layout" value="1"#}
+                           {#{% if comic.top_layout == 1 %}checked="checked"{% endif %}>サムネイル#}
+                {#</label>#}
+            {#</td>#}
+        {#</tr>#}
+        <tr>
+            <th>まえがき<br>（トップ絵下に表示されます）</th>
+            <td>
+                <textarea name="intro" style="width:100%; height:5em;">{{ comic.intro }}</textarea>
+            </td>
+        </tr>
+        <tr>
+            <th>作者コメント</th>
+            <td>
+                <textarea name="comment" style="width:100%; height:5em;">{{ comic.comment }}</textarea>
+            </td>
+        </tr>
+        <tr>
+            <th>twitter ID</th>
+            <td>
+                <input type="text" name="twitter" value="{{ comic.twitter }}">
+                <p class="warning">
+                    ※IDのみ、＠不要
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <th>pixiv ID</th>
+            <td>
+                <input type="text" name="pixiv" value="{{ comic.pixiv }}">
+                <p class="warning">
+                    ※IDのみ<br>
+                    ※数字のみなら https://www.pixiv.net/users/○○○○○に、<br>
+                    　アルファベットが含まれていれば https://pixiv.me/○○○○○に飛ばします
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <th>共有パスワード</th>
+            <td>
+                {% if comic.share_pass %}
+                    <label>
+                        <input type="checkbox" name="delete_share_pass" value="1">
+                        共有パスワードを削除する
+                    </label>
+                {% else %}
+                <input type="password" name="share_pass">
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>カスタム広告エリア（右サイド）</th>
+            <td>
+                <textarea name="side_parts" class="blogparts">{{ comic.side_parts }}</textarea>
+                <p class="warning">
+                    ※アフィリエイト用のブログパーツなど、埋め込みコードを自由に設定できます<br>
+                    ※画面幅が一定以上ある場合、作品ページの右サイドに表示されます<br>
+                    ※半角2048文字まで入ります
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <th>カスタム広告エリア（ページ下部）</th>
+            <td>
+                <textarea name="wide_parts" class="blogparts">{{ comic.wide_parts }}</textarea>
+                <p class="warning">
+                    ※アフィリエイト用のブログパーツなど、埋め込みコードを自由に設定できます<br>
+                    ※作品ページの下部に表示されます<br>
+                    ※半角2048文字まで入ります
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <th>埋め込みスクリプト</th>
+            <td>
+                <textarea readonly="readonly"
+                      style="width:100%; height: 5em;"
+                      disabled="disabled"
+                >{{ comic.embed_script }}</textarea>
+                <p class="warning">※独自のアクセス解析タグなどを埋め込み可能です。</p>
+                <p class="warning">※設定をご希望の方は、運営までご相談ください。</p>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <input type="hidden" name="id" value="{{ comic.id }}">
+    <input type="submit" value="情報更新">
+    <label>
+        <input type="checkbox" name="age" value="1">更新日時を更新
+    </label>
+</form>
+
+    <hr>
+    <h2>コメントフォームHTML</h2>
+    <p>以下のHTMLを自サイトに設置することで、まんがおきばにコメントを送れるようになります。</p>
+    <textarea style="width: 100%; height:12em;">{{ comment_form }}</textarea>
+
+    {% if auth == 'author' %}
+    <hr>
+    <h2 style="text-align:right;">作品削除</h2>
+    <form action="/edit/deleteComic" method="post" style="text-align:right;">
+        <input type="hidden" name="id" value="{{ comic.id }}">
+        <input type="submit" value="この作品を削除" onclick="return confirm('本当に削除しますか？');" style="color:red; background-color:pink">
+    </form>
+    {% endif %}
+
+{% endblock %}

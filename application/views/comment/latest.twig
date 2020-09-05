@@ -1,0 +1,23 @@
+{% extends "template.twig" %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+
+  <h2>最新コメント</h2>
+
+  <div class="comment">
+  {% if comments %}
+      {% for comment in comments %}
+          <p>
+            <a href="/comic/{{ comment.comic_id }}">{{ comment.title }}</a>
+            [{{ comment.id }}]
+            {{ comment.comment }}
+            <{{ comment.create_at }}>
+          </p>
+      {% endfor %}
+  {% endif %}
+  </div>
+
+{% endblock %}

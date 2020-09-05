@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %} - まんがおきば</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/css/style.css?19" />
+    {% if comic.neetsha_id %}
+        <link rel="stylesheet" type="text/css" href="/css/neetsha.css?1" />
+    {% endif %}
+
+    <script>
+        function nowloading () {
+            $('.nowloading').show();
+        }
+    </script>
+
+    {% block head %}{% endblock %}
+</head>
+<body class="{{ comic.neetsha_id ? 'neetsha' : '' }} {% block body_class %}{% endblock %}">
+<div class="content">
+{% if not comic.neetsha_id %}
+<h1><a href="/" title="まんがおきば" alt="まんがおきば"><img src="/img/logo.png"></a></h1>
+{% endif %}
+{% block content %}{% endblock %}
+
+<p class="footer-links">
+    <a href="/">トップ</a>
+    &nbsp;
+    {% if comic.neetsha_id %}
+        <a href="https://neetsha.jp/inside/main.php?magazine=&state=0&search=manga.okiba.jp&enc=3&t=0&author=" target="_blank">新都社連携作品一覧</a>
+        {#<a href="/neetsha">新都社連携作品一覧</a>#}
+    {% endif %}
+    &nbsp;
+    <a href="/about">ごあんない</a>
+    &nbsp;
+    <a href="/edit_author/create">作者登録</a>
+    |
+    <a href="/edit_author/">作者ログイン</a>
+    &nbsp;
+    <a href="/edit/create">作品登録</a>
+    |
+    <a href="/edit/">作品ログイン</a>
+    {#&nbsp;#}
+    {#<a href="/bbs/bbs/">掲示板</a>#}
+    &nbsp;
+    <a href="/oekaki/bbs/">お絵かき掲示板</a>
+    &nbsp;
+    <a href="/blog/">おしらせ</a>
+    &nbsp;
+    <a href="https://twitter.com/manga_okiba">twitter@manga_okiba</a>
+</p>
+</div>
+
+{% if comic.neetsha_id %}
+    <h1><a href="/" title="まんがおきば" alt="まんがおきば"><img src="/img/logo.png"></a></h1>
+{% endif %}
+
+<div class="nowloading">
+    <p>loading...</p>
+</div>
+</body>
+
+<head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-171247591-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-171247591-1');
+    </script>
+</head>
+
+</html>

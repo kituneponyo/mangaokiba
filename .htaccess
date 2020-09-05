@@ -1,0 +1,15 @@
+
+php_value post_max_size 100M
+php_value memory_limit 512M
+php_value max_execution_time 300
+php_value max_file_uploads 1000
+php_value upload_max_filesize "1M"
+
+RewriteEngine on
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+RewriteCond $1 !^(index\.php|.+\.css$|.+\.js$|.+\.png$|.+\.jpg$|robots\.txt)
+RewriteRule ^(.*)$ /index.php?$1 [L]
+

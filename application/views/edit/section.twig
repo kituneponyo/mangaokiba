@@ -1,0 +1,164 @@
+{% extends "template.twig" %}
+
+{% block head %}
+
+    <style>
+
+        table.page {
+            width: 100%;
+            margin: 0 0 1em 0;
+        }
+        table.page th {
+            font-size: small;
+        }
+        table.page td {
+            vertical-align: top;
+            font-size: small;
+        }
+        td.img {
+            width: 50%;
+            max-height: 50%;
+            text-align: center;
+        }
+
+        img.img {
+            max-width: 100%;
+            max-height: 50vh;
+        }
+
+        textarea {
+            width: 100%;
+            height: 5em;
+        }
+        textarea.above_text,
+        textarea.below_text
+        {
+        }
+
+        div.page-header {
+            border: solid 1px gainsboro;
+            border-bottom: 0;
+            /*width: calc(100% - 1em);*/
+            margin: 1em 0 0 0;
+            padding: 0.5em;
+        }
+
+        p.sorter {
+            float: right;
+            margin: 0;
+        }
+
+    </style>
+
+    <script>
+        function getSelectImageIds () {
+            var $pages = $('input[name=selectPage]:checked');
+            if ($pages.length == 0) {
+                return [];
+            }
+            var ids = [];
+            for (var i = 0; i < $pages.length; i++) {
+                ids.push($pages.eq(i).val());
+            }
+            return ids;
+        }
+
+    </script>
+
+{% endblock %}
+
+{% block body_class %}edit section{% endblock %}
+
+{% block content %}
+
+    {% include "edit/edit_header.twig" with {'currentTab':'section'} %}
+
+    <h2>話管理 - {{ section.chapter_title|default('（章なし）') }} - {{ section.title }}</h2>
+
+    <form action="/edit/editSectionInfo" method="post">
+        <table class="box">
+            <tbody>
+            <tr>
+                <th>章</th>
+                <td>
+                    <select name="chapter_id">
+                        <option value="0">---</option>
+                        {% for chapter in chapters %}
+                            <option
+                                value="{{ chapter.id }}"
+                                {% if chapter.id == section.chapter_id %}selected="selected"{% endif %}
+                            >{{ chapter.title }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th>タイトル</th>
+                <td><input type="text" name="title" value="{{ section.title }}"></td>
+            </tr>
+            <tr>
+                <th>冒頭コメント</th>
+                <td><textarea name="first_comment">{{ section.first_comment }}</textarea></td>
+            </tr>
+            <tr>
+                <th>文末コメント</th>
+                <td><textarea name="last_comment">{{ section.last_comment }}</textarea></td>
+            </tr>
+            <tr>
+                <th>更新日</th>
+                <td><input type="text" name="update_at" value="{{ section.update_at != '0000-00-00 00:00:00' ? section.update_at|date('Y-m-d') : '' }}"></td>
+            </tr>
+            </tbody>
+        </table>
+        <input type="hidden" name="comic_id" value="{{ comic.id }}">
+        <input type="hidden" name="section_id" value="{{ section.id }}">
+        <input type="submit" value="情報更新">
+    </form>
+
+    <h2>ページ一覧</h2>
+
+    <form action="/edit/editSectionPage" method="post">
+    {% for page in pages %}
+        <a name="page{{ page.id }}"></a>
+        <div class="page-header">
+            ページ{{ loop.index }}
+            <p class="sorter">
+                {% if not loop.first %}
+                    <a href="/edit/moveUpPage/{{ comic.id }}/{{ page.id }}">▲</a>
+                {% endif %}
+                {% if not loop.last %}
+                    <a href="/edit/moveDownPage/{{ comic.id }}/{{ page.id }}">▼</a>
+                {% endif %}
+                <a href="/edit/deleteSectionPage/{{ comic.id }}/{{ page.id }}"
+                   onclick="return confirm('このページを削除しますか？');">×</a>
+            </p>
+        </div>
+        <table class="box page">
+            <tbody>
+            <tr>
+                <td class="img img{{ page.id }}">
+                    {% if page.filename %}
+                    <img class="img" src="{{ imageDir }}/{{ page.filename }}">
+                    {% else %}
+                        <textarea name="text[{{ page.id }}]" style="width:100%; height:10em;" placeholder="本文">{{ page.text }}</textarea>
+                    {% endif %}
+                </td>
+                <td>
+                    <textarea class="above_text" name="above_text[{{ page.id }}]" placeholder="画像の上に表示する文章"
+                    >{{ page.above_text }}</textarea>
+                    <textarea class="below_text" name="below_text[{{ page.id }}]" placeholder="画像の下に表示する文章"
+                    >{{ page.below_text }}</textarea>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    {% endfor %}
+        <input type="hidden" name="comic_id" value="{{ comic.id }}">
+        <input type="hidden" name="section_id" value="{{ section.id }}">
+        <input type="submit" value="ページ情報更新">
+    </form>
+
+    <hr>
+
+
+{% endblock %}

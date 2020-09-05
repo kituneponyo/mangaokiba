@@ -1,0 +1,237 @@
+{% extends "template.twig" %}
+
+{% block head %}
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@mangaokiba" />
+    <meta name="twitter:creator" content="@{{ comic.twitter }}" />
+    <meta property="og:url" content="https://manga.okiba.jp/comic/{{ comic.id }}/{{ current_section.id }}" />
+    <meta property="og:title" content="{{ comic.title }}{{ current_section.chapter_title ? ' - ' ~ current_section.chapter_title : '' }}{{ current_section.title ? ' - ' ~ current_section.title : '' }} / {{ comic.author }}" />
+    <meta property="og:description" content="{{ current_section.first_comment }}" />
+    {% if pages[0] %}
+        <meta property="og:image" content="https://manga.okiba.jp/{{ imageDir }}/{{ pages[0].filename }}?{{ pages[0].id }}" />
+    {% endif %}
+
+    {% if comic.neetsha_id %}
+        <script type="text/javascript" charset="utf-8" src="https://neetsha.jp/addon/add_menu.js"></script>
+    {% endif %}
+
+    <script>
+        function nextImage (pageId) {
+            var $img = $('.page' + pageId);
+            $("html,body").animate({scrollTop:$img.next().offset().top});
+        }
+    </script>
+
+    <style>
+        .above_text {
+            margin: 2em 0 1em 0;
+        }
+        .below_text {
+            margin: 1em 0 2em 0;
+        }
+        div.page {
+            margin: 2em 0;
+        }
+        div.page-text {
+            border: solid 1px gainsboro;
+            padding: 2em;
+            text-align: left;
+            font-size: medium;
+            line-height: 1.5em;
+            background-color: white;
+        }
+        .page {
+            margin: 2em;
+        }
+        .pager a {
+            border: solid 1px gainsboro;
+            padding: 0.5em 1em;
+        }
+
+        .ad-right-side {
+            display: none;
+        }
+        @media screen and (min-width: 960px) {
+            .ad-right-side {
+                display:block;
+                position: fixed;
+                top: 0;
+                right:0;
+                width:120px;
+            }
+        }
+        @media screen and (min-width: 1280px) {
+            .ad-right-side {
+                width:200px;
+            }
+        }
+
+    </style>
+{% endblock %}
+
+{% block title -%}
+    {{ comic.title }}
+    {{ current_section.chapter_title ? ' - ' ~ current_section.chapter_title }}
+    {{ current_section.title ? ' - ' ~ current_section.title }}
+{%- endblock %}
+
+{% block body_class %}comic center{% endblock %}
+
+{% block content %}
+
+    <p class="pager">
+        {% if prev_section_id >= 0 %}
+        <a href="/comic/{{ comic.id }}/{{ prev_section_id }}">&lt;&lt; 前</a>
+        {% endif %}
+        <a href="/comic/{{ comic.id }}">作品トップ↑</a>
+        {% if next_section_id >= 0 %}
+        <a href="/comic/{{ comic.id }}/{{ next_section_id }}">次 &gt;&gt;</a>
+        {% endif %}
+    </p>
+
+    <div class="comic">
+        <h2>{{ comic.title }}</h2>
+        {% if current_section.chapter_title %}
+            <h3>{{ current_section.chapter_title }}</h3>
+        {% endif %}
+        <h3>{{ current_section.title|default('まとめて読む') }}</h3>
+
+        <!-- 冒頭コメント -->
+        {% if current_section.first_comment %}
+            <div>{{ current_section.first_comment|sanitize|url2link|raw|nl2br }}</div>
+        {% endif %}
+
+        <div>
+            {% for page in pages %}
+
+                <div class="page page{{ page.id }}">
+
+                    <!-- 上テキスト -->
+                    {% if page.above_text %}
+                        <div class="above_text">{{ page.above_text|sanitize|url2link|raw|nl2br }}</div>
+                    {% endif %}
+
+                    {% if page.filename %}
+                    <img
+                        class="comicImage"
+                        src="{{ imageDir }}/{{ page.filename }}?{{ page.id }}"
+                        onclick="nextImage({{ page.id }});"
+                    >
+                    {% elseif page.text %}
+                        <div class="page-text">
+                            {{ page.text|sanitize|url2link|raw|nl2br }}
+                        </div>
+                    {% endif %}
+
+                    <!-- 上テキスト -->
+                    {% if page.below_text %}
+                        <div class="below_text">{{ page.below_text|sanitize|url2link|raw|nl2br }}</div>
+                    {% endif %}
+
+                </div>
+
+            {% endfor %}
+        </div>
+
+        <!-- 文末コメント -->
+        {% if current_section.last_comment %}
+            <div>{{ current_section.last_comment|sanitize|url2link|raw|nl2br }}</div>
+        {% endif %}
+    </div>
+
+    {% if comic.neetsha_id %}
+
+        <div class="comment">
+            <p>
+                {% if comic.url %}
+                    <a href="{{ comic.url }}" target="_blank">{{ comic.author }}</a>
+                {% else %}
+                    {{ comic.author }}
+                {% endif %}
+                先生に励ましのお便りを送ろう！！
+            </p>
+            <script type="text/javascript">
+                <!--
+                var comicid = {{ comic.neetsha_id }};
+                -->
+            </script>
+            <script type="text/javascript" charset="utf-8" src="https://neetsha.jp/addon/add_menu.js"></script>
+
+            <form action="https://neetsha.jp/inside/comment.php" method="post" class="post" utn>
+                <input type="hidden" name="methodid" value="1" >
+                <input type="hidden" name="id" value="{{ comic.neetsha_id }}" >
+                {#<input type="hidden" name="story" value="{{ comic.section_id }}" >#}
+                <textarea style="width:80%; height:4em;" maxlength="256" name="comment" placeholder="ここに感想を書いてください。"></textarea>
+                <p>
+                    <label>
+                        <input type="checkbox" name="sage" value="1" />sage
+                    </label>
+                    <input type="submit" name="submit" value="このページの感想を書く" />
+                </p>
+            </form>
+            <p>
+                <a href="https://neetsha.jp/inside/comment.php?id={{ comic.neetsha_id }}">〒みんなの感想を読む</a>
+            </p>
+        </div>
+    {% else %}
+
+        {% include "comment/comment_form.twig" %}
+
+    {% endif %}
+
+    <p class="pager">
+        {% if prev_section_id >= 0 %}
+            <a href="/comic/{{ comic.id }}/{{ prev_section_id }}">&lt;&lt; 前</a>
+        {% endif %}
+        <a href="/comic/{{ comic.id }}">作品トップ↑</a>
+        {% if next_section_id >= 0 %}
+            <a href="/comic/{{ comic.id }}/{{ next_section_id }}">次 &gt;&gt;</a>
+        {% endif %}
+    </p>
+
+    <div>
+        <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-show-count="false">Tweet</a>
+        <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+    </div>
+
+    {% if not comic.neetsha_id %}
+        {% if comic.wide_parts %}
+            {{ comic.wide_parts|raw }}
+        {% elseif author.dlsite_wide_parts %}
+            {{ author.dlsite_wide_parts|raw }}
+        {% elseif author.dlsite_affiliate_id %}
+            {% include('ad/dlsite/allage_long.twig') %}
+        {% endif %}
+    {% endif %}
+
+
+    <p class="footer-links">
+        <a href="/edit?id={{ comic.id }}">この作品を編集する</a>
+    </p>
+
+    {% if comic.embed_script %}
+        {{ comic.embed_script|raw }}
+    {% endif %}
+
+    {% if not comic.neetsha_id %}
+        <div class="ad-right-side">
+            {#{% if asins %}#}
+                {#{% for asin in asins %}#}
+                    {#<iframe#}
+                            {#style="width:120px;height:240px;"#}
+                            {#marginwidth="0" marginheight="0" scrolling="no" frameborder="0"#}
+                            {#src="//rcm-fe.amazon-adsystem.com/e/cm?lt1=_blank&bc1=000000&IS2=1&bg1=FFFFFF&fc1=000000&lc1=0000FF&t={{ author.amazon_affiliate_id|default('majusdiary-22') }}&language=ja_JP&o=9&p=8&l=as4&m=amazon&f=ifr&ref=as_ss_li_til&asins={{ asin.asin }}"></iframe><br>#}
+                {#{% endfor %}#}
+            {#{% endif %}#}
+            {% if comic.side_parts %}
+                {{ comic.side_parts|raw }}
+            {% elseif author.dlsite_side_parts %}
+                {{ author.dlsite_side_parts|raw }}
+            {% elseif author.dlsite_affiliate_id %}
+                {% include('ad/dlsite/allage_right_side.twig') %}
+            {% endif %}
+        </div>
+    {% endif %}
+
+{% endblock %}

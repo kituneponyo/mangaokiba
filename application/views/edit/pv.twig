@@ -1,0 +1,32 @@
+{% extends "template.twig" %}
+
+{% block head %}
+    {% if comic.neetsha_id %}
+        <script type="text/javascript" charset="utf-8" src="https://neetsha.jp/addon/add_menu.js"></script>
+    {% endif %}
+{% endblock %}
+
+{% block body_class %}edit{% endblock %}
+
+{% block content %}
+
+{% include "edit/edit_header.twig" with {'currentTab':'pv'} %}
+
+    <table class="box pv">
+        <tbody>
+        <tr>
+            <th>日付</th>
+            <th>UU</th>
+            <th>PV</th>
+        </tr>
+        {% for day in days %}
+            <tr>
+                <th>{{ day.date }}</th>
+                <td>{{ day.uu }}</td>
+                <td>{{ day.pv }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

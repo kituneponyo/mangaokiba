@@ -1,0 +1,48 @@
+{% extends "template.twig" %}
+
+{% block head %}
+    {% if comic.neetsha_id %}
+        <script type="text/javascript" charset="utf-8" src="https://neetsha.jp/addon/add_menu.js"></script>
+    {% endif %}
+{% endblock %}
+
+{% block body_class %}edit{% endblock %}
+
+{% block content %}
+
+    {% include "edit/edit_header.twig" with {'currentTab':'comment'} %}
+
+    <form action="/edit/comment" method="post">
+    <table class="box">
+        <tbody>
+        <tr>
+            <th></th>
+            <th>ID</th>
+            <th>コメント</th>
+            <th>レス</th>
+        </tr>
+        {% for comment in comments %}
+            <tr>
+                <td>
+                    <label>
+                        <input type="checkbox" name="delete[]" value="{{ comment.id }}">
+                    </label>
+                </td>
+                <td>{{ comment.id }}</td>
+                <td>
+                    {{ comment.comment }}<br>
+                    {{ comment.create_at }}
+                </td>
+                <td>
+                    <textarea name="res[{{ comment.id }}]">{{ comment.res }}</textarea><br>
+                    {{ comment.res_at }}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+        <input type="submit" name="mode" value="選択したコメントを一括削除">
+        <input type="submit" name="mode" value="コメント返信">
+    </form>
+
+{% endblock %}

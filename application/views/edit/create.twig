@@ -1,0 +1,67 @@
+{% extends "template.twig" %}
+
+{% block body_class %}center{% endblock %}
+
+{% block content %}
+
+    {% include('error.twig') %}
+
+    <p>
+      <a href="/about">登録前に「ごあんない」の一読をお願いします。</a>
+    </p>
+
+<form action="/edit/doCreate" method="post">
+  <table class="box">
+    <tbody>
+      <tr>
+        <th>作品名</th>
+        <td>
+          <input type="text" name="title" value="{{ input.title }}" required>
+        </td>
+      </tr>
+      <tr>
+        <th>作者名</th>
+        <td>
+          <input type="text" name="author" value="{{ input.author }}" required>
+        </td>
+      </tr>
+      {#<tr>#}
+        {#<th>作者ホームページ</th>#}
+        {#<td>#}
+          {#<input type="text" name="url" value="{{ input.url }}">#}
+        {#</td>#}
+      {#</tr>#}
+      {#<tr>#}
+        {#<th>新都社ID</th>#}
+        {#<td>#}
+          {#<input type="text" name="neetsha_id" value="{{ input.neetsha_id }}">#}
+        {#</td>#}
+      {#</tr>#}
+      <tr>
+        <th>パスワード</th>
+        <td>
+          <input type="text" name="password" value="{{ input.password }}" required>
+        </td>
+      </tr>
+      {#<tr>#}
+        {#<th>レーティング</th>#}
+        {#<td>#}
+          {#<label>#}
+            {#<input type="radio" name="rating" value="0" checked="checked">一般#}
+          {#</label>#}
+          {#<label>#}
+            {#<input type="radio" name="rating" value="1">R-15（お色気表現）#}
+          {#</label>#}
+          {#<label>#}
+            {#<input type="radio" name="rating" value="2">R-18（エロ）#}
+          {#</label>#}
+          {#<label>#}
+            {#<input type="radio" name="rating" value="3">R-18G（グロ）#}
+          {#</label>#}
+        {#</td>#}
+      {#</tr>#}
+    </tbody>
+  </table>
+  <input type="submit" value="登録">
+</form>
+{% endblock %}

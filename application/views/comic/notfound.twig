@@ -1,0 +1,53 @@
+{% extends "template.twig" %}
+
+{% block head %}
+
+    <style>
+        table.chapters,
+        table.chapters td
+        {
+            border: 0;
+        }
+
+        p.chapter {
+            font-weight: bold;
+            margin: 2em 0 1em 0;
+        }
+
+        div.latest-section {
+            margin: 2em 0;
+        }
+
+        .ad-right-side {
+            display: none;
+        }
+        @media screen and (min-width: 960px) {
+            .ad-right-side {
+                display:block;
+                position: fixed;
+                top: 0;
+                right:0;
+                width:120px;
+            }
+        }
+        @media screen and (min-width: 1280px) {
+            .ad-right-side {
+                width:200px;
+            }
+        }
+
+    </style>
+{% endblock %}
+
+{% block body_class %}comic center{% endblock %}
+
+{% block content %}
+
+    <p>作品がありません。</p>
+    <p>
+        <a href="/">トップに戻る</a>
+        &nbsp;
+        <a href="https://neetsha.jp/">新都社から来た人はこちら</a>
+    </p>
+
+{% endblock %}

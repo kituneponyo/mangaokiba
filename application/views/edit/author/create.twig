@@ -1,0 +1,38 @@
+{% extends "template.twig" %}
+
+{% block body_class %}center{% endblock %}
+
+{% block content %}
+
+    {% include('error.twig') %}
+
+    <h2>作者登録</h2>
+
+    <p>
+      <a href="/about">登録前に「ごあんない」の一読をお願いします。</a>
+    </p>
+
+<form action="/edit_author/doCreate" method="post">
+  <table class="box">
+    <tbody>
+      <tr>
+        <th>作者名</th>
+        <td>
+          <input type="text" name="name" value="{{ input.name }}" required>
+        </td>
+      </tr>
+      <tr>
+        <th>メールアドレス</th>
+        <td><input type="text" name="email" value="{{ input.email }}"></td>
+      </tr>
+      <tr>
+        <th>パスワード</th>
+        <td>
+          <input type="text" name="password" value="{{ input.password }}" required>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <input type="submit" value="登録">
+</form>
+{% endblock %}
